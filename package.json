@@ -11,5 +11,8 @@
     "url": "git+https://github.com/zlinzz/fragments.git"
   },
   "author": "Zixin(Zoey) Lin",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.3.3"
+  }
 }
