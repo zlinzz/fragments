@@ -3,6 +3,7 @@
 DPS955 lab1
 
 ## 1. Scripts
+How to run each scripts:
 - test: npm test
 - lint: npm run lint
 - start: npm start
