@@ -9,8 +9,8 @@
     "coverage": "jest -c jest.config.js --runInBand --coverage",
     "lint": "eslint \"./src/**/*.js\" \"tests/**/*.js\"",
     "start": "node src/index.js",
-    "dev": "LOG_LEVEL=debug nodemon ./src/index.js --watch src",
-    "debug": "LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src"
+    "dev": "cross-env LOG_LEVEL=debug nodemon ./src/index.js --watch src",
+    "debug": "cross-env LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,9 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
+    "htpasswd": "^2.4.6",
+    "http-auth": "^4.2.0",
+    "http-auth-passport": "^1.0.7",
     "passport": "^0.7.0",
     "passport-http-bearer": "^1.0.1",
     "pino": "^9.4.0",
