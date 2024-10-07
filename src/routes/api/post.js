@@ -11,15 +11,9 @@ const logger = require('../../logger');
 module.exports = async (req, res) => {
   logger.info('Received a POST request to /fragments');
 
-  // Check if the data is parsed to buffer
-  if (!Buffer.isBuffer(req.body)) {
-    logger.error('Request body is not a valid buffer');
-    return res.status(400).json(createErrorResponse(400, 'Invalid body content'));
-  }
-
   const { type } = contentType.parse(req);
   if (!Fragment.isSupportedType(type)) {
-    logger.error(`Unsupported Content-Type: ${type}`);
+    logger.warn(`Unsupported Content-Type: ${type}`);
     return res.status(415).json(createErrorResponse(415, 'Unsupported Content-Type'));
   }
 
@@ -28,14 +22,11 @@ module.exports = async (req, res) => {
     ownerId: hashedEmail,
     type: req.headers['content-type'],
   };
-  // res.set('Content-Type', type);
 
   const fragment = new Fragment(fragmentParameter);
   try {
     // loggers are in Fragment class already
     await fragment.save();
-    // await fragment.setData(Buffer.from(req.body));
-    // req.body is verified as a buffer
     await fragment.setData(req.body);
   } catch (err) {
     logger.error({ message: err.message }, 'Error saving fragment during POST');
