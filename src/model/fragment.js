@@ -28,36 +28,40 @@ const validTypes = [
   `image/webp`,
   `image/gif`,
   */
-];  
+];
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
     if (!ownerId) {
       logger.error({ ownerId }, 'Fragment creation failed: ownerId is required');
-      throw new Error("ownerId is required");
+      throw new Error('ownerId is required');
     }
-    if(!type) {
+    if (!type) {
       logger.error({ ownerId, type }, 'Fragment creation failed: type is required');
-      throw new Error("type is required");
+      throw new Error('type is required');
     }
-    if(!Fragment.isSupportedType(type))
-    {
-      logger.error({ ownerId, type }, `Fragment creation failed: Unsupported content type: ${type}`);
-      throw new Error("type is not supported");
+    if (!Fragment.isSupportedType(type)) {
+      logger.error(
+        { ownerId, type },
+        `Fragment creation failed: Unsupported content type: ${type}`
+      );
+      throw new Error('type is not supported');
     }
-    if(typeof (size) !== "number" || size < 0) {
-      logger.error({ ownerId, size }, 'Fragment creation failed: size must be a non-negative number');
-      throw new Error("Invalid size value: size must be a non-negative number");
+    if (typeof size !== 'number' || size < 0) {
+      logger.error(
+        { ownerId, size },
+        'Fragment creation failed: size must be a non-negative number'
+      );
+      throw new Error('Invalid size value: size must be a non-negative number');
     }
-    
+
     this.id = id || randomUUID();
     this.ownerId = ownerId;
     this.created = created || new Date().toISOString();
     this.updated = updated || new Date().toISOString();
     this.type = type;
     this.size = size;
-    logger.info({ id: this.id, ownerId: this.ownerId }, 'Fragment created');
-    logger.debug({ fragment: this }, 'Newly created fragment metadata');
+    logger.debug({ fragment: this }, 'Fragment created');
   }
 
   /**
@@ -67,11 +71,11 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    try{
+    try {
       const fragments = await listFragments(ownerId, expand);
       logger.debug({ fragments }, 'Retrieved fragments byUser()');
       return fragments;
-    } catch (err){
+    } catch (err) {
       logger.error({ ownerId, err }, 'Error retrieving fragments for user');
       throw err;
     }
@@ -87,15 +91,15 @@ class Fragment {
     try {
       const fragment = await readFragment(ownerId, id);
       if (!fragment) {
-        logger.error({ownerId, id}, 'Fragment by id not found');
-        throw new Error("Fragment by id not found");
+        logger.error({ ownerId, id }, 'Fragment by id not found');
+        throw new Error('Fragment by id not found');
       }
       logger.debug({ fragment: fragment }, 'Retrieved fragment byId()');
       return fragment;
-    } catch(err) {
+    } catch (err) {
       logger.error({ ownerId, id, err }, 'Error retrieving fragment by id');
       throw err;
-    }  
+    }
   }
 
   /**
@@ -105,11 +109,11 @@ class Fragment {
    * @returns Promise<void>
    */
   static async delete(ownerId, id) {
-    try{
+    try {
       // Make sure id exist before delete
-      await this.byId(ownerId, id); 
+      await this.byId(ownerId, id);
       const result = await deleteFragment(ownerId, id);
-      logger.info({ownerId, id, result}, 'Fragment deleted');
+      logger.info({ ownerId, id, result }, 'Fragment deleted');
       return Promise.resolve();
     } catch (err) {
       logger.error({ ownerId, id, err }, 'Error deleting fragment');
@@ -126,7 +130,6 @@ class Fragment {
       await writeFragment(this);
       this.updated = new Date().toISOString();
       logger.info({ ownerId: this.ownerId, id: this.id }, 'Fragment metadata saved');
-      logger.debug({ fragment: this }, 'Fragment metadata details');
       return Promise.resolve();
     } catch (err) {
       logger.error({ ownerId: this.ownerId, id: this.id, err }, 'Error saving fragment metadata');
@@ -155,9 +158,11 @@ class Fragment {
    * @returns Promise<void>
    */
   async setData(data) {
-    if (!Buffer.isBuffer(data))
-    {
-      logger.error({ ownerId: this.ownerId, id: this.id }, 'Invalid data type: data must be a Buffer');
+    if (!Buffer.isBuffer(data)) {
+      logger.error(
+        { ownerId: this.ownerId, id: this.id },
+        'Invalid data type: data must be a Buffer'
+      );
       throw new Error('Invalid data type: data must be a Buffer');
     }
     try {
@@ -165,10 +170,9 @@ class Fragment {
       this.size = data.length;
       this.updated = new Date().toISOString();
       logger.info({ ownerId: this.ownerId, id: this.id }, 'Fragment data saved');
-      logger.debug({ fragment: this }, 'Fragment data details saved');
       return Promise.resolve();
     } catch (err) {
-      logger.error({ ownerId: this.ownerId, id: this.id, err }, 'Error saving fragment data')
+      logger.error({ ownerId: this.ownerId, id: this.id, err }, 'Error saving fragment data');
       throw err;
     }
   }
