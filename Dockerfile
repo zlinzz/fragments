@@ -64,4 +64,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl --fail localhost:8080 || exit 1
 
 # Start the container by running our server
-CMD npm start
+CMD ["npm", "start"]
