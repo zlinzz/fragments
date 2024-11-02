@@ -130,7 +130,7 @@ class Fragment {
       await writeFragment(this);
       this.updated = new Date().toISOString();
       logger.info({ ownerId: this.ownerId, id: this.id }, 'Fragment metadata saved');
-      return Promise.resolve();
+      return;
     } catch (err) {
       logger.error({ ownerId: this.ownerId, id: this.id, err }, 'Error saving fragment metadata');
       throw err;
@@ -170,7 +170,9 @@ class Fragment {
       this.size = data.length;
       this.updated = new Date().toISOString();
       logger.info({ ownerId: this.ownerId, id: this.id }, 'Fragment data saved');
-      return Promise.resolve();
+      // A1 improvement
+      this.save();
+      return;
     } catch (err) {
       logger.error({ ownerId: this.ownerId, id: this.id, err }, 'Error saving fragment data');
       throw err;
