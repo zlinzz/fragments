@@ -35,6 +35,8 @@ describe('GET /v1/fragments', () => {
     });
     await fragment1.save();
     await fragment2.save();
+    await fragment1.setData(Buffer.from('a'));
+    await fragment2.setData(Buffer.from('b'));
 
     // Make a get request to get back a list of id of the current user
     const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
@@ -48,26 +50,60 @@ describe('GET /v1/fragments', () => {
     idList.forEach((id) => {
       expect(res.body.fragments).toContain(id);
     });
-  });
-});
 
-// Mock byUser throw an error when send a request to Get /fragments route and check the output
-test('returns 500 when an error occurs', async () => {
-  // Mock byUser() throw an error
-  const mockByUser = jest
-    .spyOn(Fragment, 'byUser')
-    .mockRejectedValue(new Error('Error retrieving fragments for user'));
-
-  const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
-  expect(res.statusCode).toBe(500);
-  expect(res.body).toEqual({
-    status: 'error',
-    error: {
-      code: 500,
-      message: 'Unable to retrieve fragments',
-    },
+    await Fragment.delete(hashedOwnerId, fragment1.id);
+    await Fragment.delete(hashedOwnerId, fragment2.id);
   });
 
-  // Restore the original method
-  mockByUser.mockRestore();
+  // Test for expanded fragments when expend=1
+  test('returns expanded fragments when expand=1', async () => {
+    // Create test fragments and save in database
+    const hashedOwnerId = hashEmail('user1@email.com');
+    const fragment1 = new Fragment({
+      ownerId: hashedOwnerId,
+      type: 'text/plain',
+    });
+    const fragment2 = new Fragment({
+      ownerId: hashedOwnerId,
+      type: 'text/html',
+    });
+    await fragment1.save();
+    await fragment2.save();
+    await fragment1.setData(Buffer.from('a'));
+    await fragment2.setData(Buffer.from('<h1>b</h1>'));
+
+    // Make a get request to get back the expanded fragments
+    const res = await request(app)
+      .get('/v1/fragments?expand=1')
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(Array.isArray(res.body.fragments)).toBe(true);
+
+    expect(res.body.fragments).toEqual(expect.arrayContaining([fragment1, fragment2]));
+
+    await Fragment.delete(hashedOwnerId, fragment1.id);
+    await Fragment.delete(hashedOwnerId, fragment2.id);
+  });
+
+  // Mock byUser throw an error when send a request to Get /fragments route and check the output
+  test('returns 500 when an error occurs', async () => {
+    // Mock byUser() throw an error
+    const mockByUser = jest
+      .spyOn(Fragment, 'byUser')
+      .mockRejectedValue(new Error('Error retrieving fragments for user'));
+
+    const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toEqual({
+      status: 'error',
+      error: {
+        code: 500,
+        message: 'Unable to retrieve fragments',
+      },
+    });
+
+    // Restore the original method
+    mockByUser.mockRestore();
+  });
 });
