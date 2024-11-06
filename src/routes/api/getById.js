@@ -1,4 +1,4 @@
-// // src/routes/api/get.js
+// src/routes/api/getById.js
 
 const { createErrorResponse } = require('./../../response');
 const { Fragment } = require('../../model/fragment');
@@ -79,8 +79,11 @@ module.exports = async (req, res) => {
 
     logger.info({ id }, 'No extension provided,  returning fragment data');
     return res.status(200).send(fragmentData);
-  } catch (error) {
-    logger.error('Error fetching fragment', { message: error.message });
+  } catch (err) {
+    if (err.message === 'Fragment by id not found') {
+      return res.status(404).json(createErrorResponse(404, err.message));
+    }
+    logger.error('Error fetching fragment', { message: err.message });
     res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
   }
 };

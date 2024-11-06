@@ -24,9 +24,30 @@ describe('GET /v1/fragments/:id', () => {
     await fragment.setData(fragmentData);
   });
 
-  test('should return 500 when an internal server error occurs', async () => {
+  test('should return 404 when fragment id is not found', async () => {
     // Mock byId() throw an error when id not found
     jest.spyOn(Fragment, 'byId').mockRejectedValueOnce(new Error('Fragment by id not found'));
+
+    const res = await request(app)
+      .get(`/v1/fragments/${fragment.id}`)
+      .auth('user1@email.com', 'password1');
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toEqual({
+      status: 'error',
+      error: {
+        code: 404,
+        message: 'Fragment by id not found',
+      },
+    });
+
+    // Restore the original method
+    Fragment.byId.mockRestore();
+  });
+
+  test('should return 500 when an internal server error occurs', async () => {
+    // Mock byId() throw an error due to internal server problem
+    jest.spyOn(Fragment, 'byId').mockRejectedValueOnce(new Error('Internal server error'));
 
     const res = await request(app)
       .get(`/v1/fragments/${fragment.id}`)
