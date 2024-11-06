@@ -30,6 +30,9 @@ router.get('/fragments', require('./get'));
 // Define the new route for getting a fragment by ID: GET /v1/fragments/:id
 router.get('/fragments/:id', require('./getById'));
 
+// Define the route for getting a fragment's metadata by ID: GET /v1/fragments/:id/info
+router.get('/fragments/:id/info', require('./getIdInfo'));
+
 // Define the POST route, which will be: POST /v1/fragments
 // Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
 // You can use Buffer.isBuffer(req.body) to test if it was parsed by the raw body parser.
