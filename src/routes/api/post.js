@@ -29,6 +29,9 @@ module.exports = async (req, res) => {
     await fragment.save();
     await fragment.setData(req.body);
   } catch (err) {
+    if (err.message === 'Invalid data type: data must be a Buffer') {
+      return res.status(400).json(createErrorResponse(400, 'Invalid data input.'));
+    }
     logger.error({ message: err.message }, 'Error saving fragment during POST');
     return res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
   }
