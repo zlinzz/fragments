@@ -3,20 +3,29 @@
 const { createErrorResponse } = require('./../../response');
 const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
+const markdownit = require('markdown-it');
+const md = markdownit();
 
 // Check if the contentType allows the conversion between the extension type
 function isValidConversion(contentType, extension) {
   const validConversions = {
     'text/plain': ['txt'],
+    'text/markdown': ['html'],
     // more conversions later
   };
   return validConversions[contentType]?.includes(extension);
 }
 
 // Convert the fragment data to the extension type
-function convertFragmentData(data, extension) {
+function convertFragmentData(data, contentType, extension) {
   if (extension === 'txt') {
-    return data;
+    if (contentType === 'text/plain') {
+      return data;
+    }
+  } else if (extension === 'html') {
+    if (contentType === 'text/markdown') {
+      return md.render(data.toString());
+    }
   }
   return null;
 }
@@ -25,6 +34,8 @@ function convertFragmentData(data, extension) {
 function getContentType(extension) {
   const contentTypes = {
     txt: 'text/plain',
+    md: 'text/markdown',
+    html: 'text/html',
     // more later
   };
   return contentTypes[extension] || 'application/octet-stream';
@@ -63,7 +74,7 @@ module.exports = async (req, res) => {
       }
 
       // If it is a valid conversion, convert fragment data to the extension type
-      const convertedData = await convertFragmentData(fragmentData, extension);
+      const convertedData = await convertFragmentData(fragmentData, contentType, extension);
       logger.info(
         { id, contentType, extension },
         'Successfully convert fragment data to the extension type'

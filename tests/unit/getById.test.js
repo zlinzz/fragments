@@ -6,7 +6,7 @@ const { Fragment } = require('../../src/model/fragment');
 const hashEmail = require('../../src/hash');
 
 describe('GET /v1/fragments/:id', () => {
-  let ownerId, fragment, fragmentData, type;
+  let ownerId, fragment, fragment2, fragmentData, fragmentData2, type, type2;
 
   // Write Fragment and Fragment data into the database before each test
   // So we can use them as test Fragments
@@ -15,6 +15,9 @@ describe('GET /v1/fragments/:id', () => {
     fragmentData = Buffer.from('This is a fragment');
     type = 'text/plain';
 
+    fragmentData2 = Buffer.from('## Markdown fragment');
+    type2 = 'text/markdown';
+
     // Create and save a fragment with data in the database
     fragment = new Fragment({
       ownerId: ownerId,
@@ -22,6 +25,13 @@ describe('GET /v1/fragments/:id', () => {
     });
     await fragment.save();
     await fragment.setData(fragmentData);
+
+    fragment2 = new Fragment({
+      ownerId: ownerId,
+      type: type2,
+    });
+    await fragment2.save();
+    await fragment2.setData(fragmentData2);
   });
 
   test('should return 404 when fragment id is not found', async () => {
@@ -91,13 +101,23 @@ describe('GET /v1/fragments/:id', () => {
     expect(res.text).toBe('This is a fragment');
   });
 
-  test('should convert fragment data for valid extension', async () => {
+  test('should convert txt to txt', async () => {
     const res = await request(app)
-      .get(`/v1/fragments/${fragment.id}.txt`) // Only .txt is supported at this point
+      .get(`/v1/fragments/${fragment.id}.txt`) // convert txt to txt
       .auth('user1@email.com', 'password1');
 
     expect(res.statusCode).toBe(200);
-    expect(res.headers['content-type']).toBe('text/plain');
+    expect(res.headers['content-type']).toContain('text/plain');
     expect(res.text).toBe('This is a fragment');
+  });
+
+  test('should convert md to html', async () => {
+    const res = await request(app)
+      .get(`/v1/fragments/${fragment2.id}.html`) // convert md to html
+      .auth('user1@email.com', 'password1');
+
+    expect(res.statusCode).toBe(200);
+    expect(res.headers['content-type']).toContain('text/html');
+    expect(res.text).toContain('<h2>Markdown fragment</h2>'); // A newline maybe added when converted
   });
 });
