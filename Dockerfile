@@ -12,7 +12,7 @@ WORKDIR /app
 # Option 1: explicit path - Copy the package.json and package-lock.json
 # files into /app. NOTE: the trailing `/` on `/app/`, which tells Docker
 # that `app` is a directory and not a file.
-COPY package*.json /app/
+COPY --chown=node:node package*.json /app/
 
 # Install node devDependencies
 RUN npm ci --production
@@ -25,13 +25,14 @@ FROM node:20.10.0-alpine3.19@sha256:9e38d3d4117da74a643f67041c83914480b335c3bd44
 WORKDIR /app
 
 # Copy cached dependencies from previous stage so we don't have to download
-COPY --from=dependencies /app /app
+COPY --from=dependencies --chown=node:node /app/node_modules /app/node_modules
+COPY --from=dependencies /app/package.json /app/package.json
 
 # Copy src to /app/src/
-COPY ./src ./src
+COPY --chown=node:node ./src ./src
 
 # Copy our HTPASSWD file
-COPY ./tests/.htpasswd ./tests/.htpasswd
+COPY --chown=node:node ./tests/.htpasswd ./tests/.htpasswd
 
 #######################################################################
 
@@ -39,23 +40,21 @@ COPY ./tests/.htpasswd ./tests/.htpasswd
 FROM node:20.10.0-alpine3.19@sha256:9e38d3d4117da74a643f67041c83914480b335c3bd44d37ccf5b5ad86cd715d1 
 
 LABEL maintainer="Zoey Lin <zlin104@myseneca.ca>" \
-description="Fragments node.js microservice"
+      description="Fragments node.js microservice"
 
 WORKDIR /app
 
 #copy from builder
-COPY --from=builder /app /app
+COPY --from=builder --chown=node:node /app /app
 
 # We default to use port 8080 in our service
-ENV PORT=8080
-
-# Reduce npm spam when installing within Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
-ENV NPM_CONFIG_LOGLEVEL=warn
-
-# Disable colour when run inside Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#color
-ENV NPM_CONFIG_COLOR=false
+ENV PORT=8080\
+    # Reduce npm spam when installing within Docker
+    # https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
+    NPM_CONFIG_LOGLEVEL=warn\
+    # Disable colour when run inside Docker
+    # https://docs.npmjs.com/cli/v8/using-npm/config#color
+    NPM_CONFIG_COLOR=false
 
 # We run our service on port 8080
 EXPOSE 8080
@@ -63,5 +62,7 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl --fail localhost:8080 || exit 1
 
+USER node 
+
 # Start the container by running our server
-CMD ["npm", "start"]
+CMD ["node", "./src/index.js"]
