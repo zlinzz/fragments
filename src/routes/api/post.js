@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
     logger.error({ message: err.message }, 'Error saving fragment during POST');
     return res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
   }
-  const locationBase = `http://${req.headers.host}/`;
+  const locationBase = `http://${req.headers.host}`;
   const location = `${locationBase}/v1/fragments/${fragment.id}`;
   res.set('Location', location);
   logger.debug({ location }, 'Location header set for the fragment');
