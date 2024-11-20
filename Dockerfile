@@ -26,7 +26,7 @@ WORKDIR /app
 
 # Copy cached dependencies from previous stage so we don't have to download
 COPY --from=dependencies --chown=node:node /app/node_modules /app/node_modules
-COPY --from=dependencies /app/package.json /app/package.json
+COPY --from=dependencies --chown=node:node /app/package.json /app/package.json
 
 # Copy src to /app/src/
 COPY --chown=node:node ./src ./src
@@ -62,7 +62,7 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl --fail localhost:8080 || exit 1
 
-USER node 
+# USER node 
 
 # Start the container by running our server
 CMD ["node", "./src/index.js"]
