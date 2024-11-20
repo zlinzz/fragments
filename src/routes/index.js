@@ -11,6 +11,8 @@ const { authenticate } = require('../auth');
 // Import response functions
 const { createSuccessResponse } = require('../response');
 
+const { hostname } = require('os');
+
 // Create a router that we can use to mount our API
 const router = express.Router();
 
@@ -29,11 +31,15 @@ router.get('/', (req, res) => {
   // Client's shouldn't cache this response (always request it fresh)
   res.setHeader('Cache-Control', 'no-cache');
   // Send a 200 'OK' response
-  res.status(200).json(createSuccessResponse({
-    author, 
-    githubUrl: 'https://github.com/zlinzz/fragments', 
-    version
-  }));
+  res.status(200).json(
+    createSuccessResponse({
+      author,
+      githubUrl: 'https://github.com/zlinzz/fragments',
+      version,
+      // Include the hostname in the response
+      hostname: hostname(),
+    })
+  );
 });
 
 module.exports = router;
