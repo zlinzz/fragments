@@ -9,6 +9,7 @@ module.exports = async (req, res) => {
 
   try {
     await Fragment.delete(ownerId, id);
+    logger.info({ ownerId, id }, 'Fragment deleted.');
     return res.status(200).json(createSuccessResponse());
   } catch (err) {
     // if Fragment.byID throw inside deleteFragment, return 404; Else 500
