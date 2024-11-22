@@ -1,3 +1,6 @@
+# minio
+minio/
+
 # ssh private keys
 *.ppk
 *.pem
