@@ -3,6 +3,7 @@
 services:
   # Fragments microservice API server
   fragments:
+    container_name: fragments
     # Use a proper init process (tini)
     init: true
     # Build the Docker Image using the Dockerfile
