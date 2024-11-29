@@ -91,6 +91,8 @@ jobs:
           # for any values that should not be checked into git directly.  Here are
           # a few to get you started, but you should fill in the rest yourself.
           # No need AWS credentials under env since labRole is set for executionRoleArn & taskRoleArn in task definition
+          # AWS S3 bucket name & DynamoDB table name is added as env in fragments-definition.json
+          # so need to add them here
           environment-variables: |
             LOG_LEVEL=debug
             NODE_ENV=production
