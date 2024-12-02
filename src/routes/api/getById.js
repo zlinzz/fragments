@@ -18,6 +18,8 @@ function isValidConversion(contentType, extension) {
 
 // Convert the fragment data to the extension type
 function convertFragmentData(data, contentType, extension) {
+  logger.info({ data, contentType, extension }, 'Converting fragment data');
+
   if (extension === 'txt') {
     if (contentType === 'text/plain') {
       return data;
@@ -50,13 +52,19 @@ module.exports = async (req, res) => {
     const extension = parts.length > 1 ? parts.pop() : null; // Extract the optional extension from Id
 
     // Get the fragment by id
+    // This will return plain JavaScript object (retrieved from DynamoDb if used)
     const fragment = await Fragment.byId(ownerId, cleanId);
+    // instantiate a new fragment object called fragment2
+    const fragment2 = new Fragment(fragment); 
 
     // Get the actual data of the fragment
-    const fragmentData = await fragment.getData();
+    const fragmentData = await fragment2.getData();
+
     const contentType = fragment.type;
 
     if (extension != null) {
+      logger.info('GetbyId request with extension');
+
       // Check if the extension used represents an unknown/unsupported type
       if (!isValidConversion(contentType, extension)) {
         logger.error(
@@ -83,6 +91,7 @@ module.exports = async (req, res) => {
       return res.status(200).send(convertedData);
     }
 
+    logger.info('GetbyID Request without extension');
     // If no extension provided, set the content type to fragment data's type
     if (contentType) {
       res.setHeader('Content-Type', contentType);
