@@ -29,9 +29,9 @@ services:
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-fragments}
       - AWS_DYNAMODB_TABLE_NAME=${AWS_DYNAMODB_TABLE_NAME:-fragments}
       # Fake credentials
-      - AWS_ACCESS_KEY_ID=fakeAccessKey
-      - AWS_SECRET_ACCESS_KEY=fakeSecretKey
-      - AWS_SESSION_TOKEN=fakeSessionToken
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_SESSION_TOKEN=test
     # Ports to publish
     ports:
       - '8080:8080'
