@@ -92,13 +92,13 @@ class Fragment {
     try {
       const fragment = await readFragment(ownerId, id);
       if (!fragment) {
-        logger.error({ ownerId, id }, 'Fragment by id not found');
+        logger.warn({ ownerId, id }, 'Fragment by id not found');
         throw new Error('Fragment by id not found');
       }
       logger.debug({ fragment: fragment }, 'Retrieved fragment byId()');
       return fragment;
     } catch (err) {
-      logger.error({ ownerId, id, err }, 'Error retrieving fragment by id');
+      logger.warn({ ownerId, id, err }, 'Error retrieving fragment by id, id not found');
       throw err;
     }
   }
