@@ -174,7 +174,7 @@ async function deleteFragment(ownerId, id) {
   // Dynamodb delete command
   const paramsddb = {
     TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-    Key: { pk: ownerId, sk: id },
+    Key: { ownerId, id },
   };
 
   const commandddb = new DeleteCommand(paramsddb);

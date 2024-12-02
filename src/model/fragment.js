@@ -172,7 +172,7 @@ class Fragment {
       this.updated = new Date().toISOString();
       logger.info({ ownerId: this.ownerId, id: this.id }, 'Fragment data saved');
       // A1 improvement
-      this.save();
+      await this.save();
       return;
     } catch (err) {
       logger.error({ ownerId: this.ownerId, id: this.id, err }, 'Error saving fragment data');
