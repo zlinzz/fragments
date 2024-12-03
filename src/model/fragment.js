@@ -21,14 +21,10 @@ const validTypes = [
   `text/html`,
   `text/csv`,
   `application/json`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-   
   `image/png`,
   `image/jpeg`,
   `image/webp`,
   `image/gif`,
-  */
 ];
 
 class Fragment {
@@ -203,7 +199,36 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    return validTypes;
+    switch (this.mimeType) {
+      case 'text/plain':
+        return ['text/plain'];
+
+      case 'text/markdown':
+        return ['text/markdown', 'text/html', 'text/plain'];
+
+      case 'text/html':
+        return ['text/html', 'text/plain'];
+
+      case 'text/csv':
+        return ['text/csv', 'text/plain', 'text/json'];
+
+      case 'application/json':
+        return ['text/json', 'text/yaml', 'text/yml', 'text/plain'];
+
+      case 'application/yaml':
+        return ['application/yaml', 'text/plain'];
+
+      case 'image/png':
+      case 'image/jpeg':
+      case 'image/webp':
+      case 'image/avif':
+      case 'image/gif':
+        return ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'];
+
+      default:
+        logger.warn({mimeType: this.mimeType}, 'No supported conversion format for this mimeType')
+        return null
+    }
   }
 
   /**
