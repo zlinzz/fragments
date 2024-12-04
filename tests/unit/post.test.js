@@ -2,8 +2,6 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const hashEmail = require('../../src/hash');
-const fs = require('fs');
-const path = require('path');
 
 describe('POST /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -48,15 +46,13 @@ describe('POST /v1/fragments', () => {
 
   // Request with unsupported content type will be rejected with 415 status code
   test('unsupported Content-Type is rejected with 415 error', async () => {
-    const pngPath = path.join(__dirname, '..', 'seneca_logo.png');
-    // Read the PNG file as binary data
-    const pngData = fs.readFileSync(pngPath);
+    const xmlData = '<note><to>User</to><from>Admin</from><message>Hello</message></note>';
 
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
-      .send(pngData)
-      .set('Content-Type', 'image/png');
+      .send(xmlData)
+      .set('Content-Type', 'application/xml');
 
     // Check status code and error message
     expect(res.statusCode).toBe(415);
