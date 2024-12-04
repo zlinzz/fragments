@@ -38,6 +38,11 @@ router.get('/fragments/:id/info', require('./getIdInfo'));
 // You can use Buffer.isBuffer(req.body) to test if it was parsed by the raw body parser.
 router.post('/fragments', rawBody(), require('./post'));
 
+// Define the put route, which will be PUT /v1/fragments:id
+// Data must be a buffer
+// User can update the fragment's data but not type
+router.put('/fragments/:id', rawBody(), require('./put'));
+
 // Define the DELETE route, which will be: DELETE /v1/fragments:id
 router.delete('/fragments/:id', require('./delete'));
 
