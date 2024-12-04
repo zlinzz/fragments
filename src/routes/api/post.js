@@ -2,7 +2,6 @@
 
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
-const contentType = require('content-type');
 const logger = require('../../logger');
 
 /**
@@ -11,7 +10,7 @@ const logger = require('../../logger');
 module.exports = async (req, res) => {
   logger.info('Received a POST request to /fragments');
 
-  const { type } = contentType.parse(req);
+  const  type  = req.headers['content-type'];
   if (!Fragment.isSupportedType(type)) {
     logger.warn(`Unsupported Content-Type: ${type}`);
     return res.status(415).json(createErrorResponse(415, 'Unsupported Content-Type'));
@@ -20,7 +19,7 @@ module.exports = async (req, res) => {
   const hashedEmail = req.user;
   const fragmentParameter = {
     ownerId: hashedEmail,
-    type: req.headers['content-type'],
+    type,
   };
 
   const fragment = new Fragment(fragmentParameter);
