@@ -10,14 +10,12 @@ const validTypes = [
   `text/html`,
   `text/csv`,
   `application/json`,
-
-  /*
-  Currently, only text/plain is supported. Others will be added later.
+  `application/yaml`,
   `image/png`,
   `image/jpeg`,
   `image/webp`,
+  `image/avif`,
   `image/gif`,
-  */
 ];
 
 describe('Fragment class', () => {
@@ -167,7 +165,61 @@ describe('Fragment class', () => {
         type: 'text/plain; charset=utf-8',
         size: 0,
       });
-      expect(fragment.formats).toEqual(validTypes);
+      expect(fragment.formats).toEqual(['text/plain']);
+    });
+
+    test('formats returns the expected result for supported MIME types', () => {
+      const testCases = [
+        {
+          type: 'text/markdown',
+          expected: ['text/markdown', 'text/html', 'text/plain'],
+        },
+        {
+          type: 'text/html',
+          expected: ['text/html', 'text/plain'],
+        },
+        {
+          type: 'text/csv',
+          expected: ['text/csv', 'text/plain', 'text/json'],
+        },
+        {
+          type: 'application/json',
+          expected: ['text/json', 'text/yaml', 'text/yml', 'text/plain'],
+        },
+        {
+          type: 'application/yaml',
+          expected: ['application/yaml', 'text/plain'],
+        },
+        {
+          type: 'image/png',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/jpeg',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/webp',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/avif',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/gif',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+      ];
+
+      testCases.forEach(({ type, expected }) => {
+        const fragment = new Fragment({
+          ownerId: '1234',
+          type,
+          size: 0,
+        });
+        expect(fragment.formats).toEqual(expected);
+      });
     });
   });
 
