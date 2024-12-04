@@ -21,9 +21,11 @@ const validTypes = [
   `text/html`,
   `text/csv`,
   `application/json`,
+  `application/yaml`,
   `image/png`,
   `image/jpeg`,
   `image/webp`,
+  `image/avif`,
   `image/gif`,
 ];
 
@@ -226,8 +228,11 @@ class Fragment {
         return ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'];
 
       default:
-        logger.warn({mimeType: this.mimeType}, 'No supported conversion format for this mimeType')
-        return null
+        logger.warn(
+          { mimeType: this.mimeType },
+          'No supported conversion format for this mimeType'
+        );
+        return null;
     }
   }
 
