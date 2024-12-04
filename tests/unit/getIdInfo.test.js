@@ -28,6 +28,17 @@ describe('GET /v1/fragments/:id/info', () => {
     jest.clearAllMocks();
   });
 
+  // If the request is missing the Authorization header, it should be forbidden
+  test('unauthenticated requests are denied', () =>
+    request(app).get(`/v1/fragments/${fragment.id}/info`).expect(401));
+
+  // If the wrong username/password pair are used (no such user), it should be forbidden
+  test('incorrect credentials are denied', () =>
+    request(app)
+      .get(`/v1/fragments/${fragment.id}/info`)
+      .auth('invalid@email.com', 'incorrect_password')
+      .expect(401));
+
   test('should return fragment metadata when id exist', async () => {
     const res = await request(app)
       .get(`/v1/fragments/${fragment.id}/info`)

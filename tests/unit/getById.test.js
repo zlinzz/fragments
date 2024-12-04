@@ -34,6 +34,17 @@ describe('GET /v1/fragments/:id', () => {
     await fragment2.setData(fragmentData2);
   });
 
+  // If the request is missing the Authorization header, it should be forbidden
+  test('unauthenticated requests are denied', () =>
+    request(app).get(`/v1/fragments/${fragment.id}`).expect(401));
+
+  // If the wrong username/password pair are used (no such user), it should be forbidden
+  test('incorrect credentials are denied', () =>
+    request(app)
+      .get(`/v1/fragments/${fragment.id}`)
+      .auth('invalid@email.com', 'incorrect_password')
+      .expect(401));
+
   test('should return 404 when fragment id is not found', async () => {
     // Mock byId() throw an error when id not found
     jest.spyOn(Fragment, 'byId').mockRejectedValueOnce(new Error('Fragment by id not found'));
