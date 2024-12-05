@@ -17,7 +17,9 @@ module.exports = async (req, res) => {
       logger.error({ ownerId, id }, 'Failed to delete fragment. Fragment not found.');
       return res.status(404).json(createErrorResponse(404, err.message));
     }
-    logger.error({ err }, 'Failed to delete fragment.');
-    return res.status(500).json((500, 'An error occurred while deleting the fragment'));
+    logger.error({ err: err.message }, 'Failed to delete fragment.');
+    return res
+      .status(500)
+      .json(createErrorResponse(500, `Internal Server error occur while deleting the fragment`));
   }
 };

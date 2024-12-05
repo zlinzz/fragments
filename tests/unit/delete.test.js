@@ -2,6 +2,7 @@
 
 const request = require('supertest');
 const app = require('../../src/app');
+const { Fragment } = require('../../src/model/fragment');
 
 describe('Delete /v1/fragments:id', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -44,5 +45,35 @@ describe('Delete /v1/fragments:id', () => {
     expect(delRes.body.status).toBe('error');
     expect(delRes.body.error.code).toBe(404);
     expect(delRes.body.error.message).toEqual('Fragment by id not found');
+  });
+
+  // An internal server error should return 500
+  test('Internal server errors should return 500', async () => {
+    const data = 'This is a plain text fragment';
+    const postRes = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .send(data)
+      .set('Content-Type', 'text/plain');
+
+    const fragment = postRes.body.fragment;
+
+    jest
+      .spyOn(Fragment, 'delete')
+      .mockRejectedValueOnce(new Error('fragment.setData is not a function'));
+
+    const delRes = await request(app)
+      .delete(`/v1/fragments/${fragment.id}`)
+      .auth('user1@email.com', 'password1');
+
+    expect(delRes.status).toBe(500);
+    expect(delRes.body.status).toBe('error');
+    expect(delRes.body.error.code).toBe(500);
+    expect(delRes.body.error.message).toEqual(
+      'Internal Server error occur while deleting the fragment'
+    );
+
+    // Restore the original method
+    Fragment.delete.mockRestore();
   });
 });
