@@ -212,10 +212,10 @@ class Fragment {
         return ['text/html', 'text/plain'];
 
       case 'text/csv':
-        return ['text/csv', 'text/plain', 'text/json'];
+        return ['text/csv', 'text/plain', 'application/json'];
 
       case 'application/json':
-        return ['text/json', 'text/yaml', 'text/yml', 'text/plain'];
+        return ['application/json', 'application/yaml', 'text/plain'];
 
       case 'application/yaml':
         return ['application/yaml', 'text/plain'];

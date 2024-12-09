@@ -180,11 +180,11 @@ describe('Fragment class', () => {
         },
         {
           type: 'text/csv',
-          expected: ['text/csv', 'text/plain', 'text/json'],
+          expected: ['text/csv', 'text/plain', 'application/json'],
         },
         {
           type: 'application/json',
-          expected: ['text/json', 'text/yaml', 'text/yml', 'text/plain'],
+          expected: ['application/json', 'application/yaml', 'text/plain'],
         },
         {
           type: 'application/yaml',
