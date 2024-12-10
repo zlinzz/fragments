@@ -242,8 +242,15 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    const { type } = contentType.parse(value);
-    return validTypes.includes(type);
+    logger.info({ inputType: value }, 'Checking if the input content type is supported');
+    try {
+      // .parse could throw 500 - invalid media type, when the media type input is unacceptable
+      const { type } = contentType.parse(value);
+      return validTypes.includes(type);
+    } catch (err) {
+      logger.warn({ inputType: value, errMessage: err.message }, 'Invalid content type format');
+      return false;
+    }
   }
 }
 
