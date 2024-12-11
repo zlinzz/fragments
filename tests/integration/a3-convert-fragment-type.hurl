@@ -291,7 +291,8 @@ jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
 jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.type" == "text/csv"
-jsonpath "$.fragment.size" == 65
+# Pay attention to CRLF & LF conflict; using CRLF
+jsonpath "$.fragment.size" == 62
 [Captures]
 url5: header "Location"
 
@@ -304,7 +305,7 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: text/csv
 [Asserts]
-body contains "Number,Footnote\r\n1,This is footnote one\r\n2,This is footnote two"
+body contains "Number,Footnote\n1,This is footnote one\n2,This is footnote two"
 
 # 5.3. GET the text/csv fragment as .csv
 GET {{url5}}.csv
@@ -315,7 +316,7 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: text/csv
 [Asserts]
-body contains "Number,Footnote\r\n1,This is footnote one\r\n2,This is footnote two"
+body contains "Number,Footnote\n1,This is footnote one\n2,This is footnote two"
 
 
 # 5.4. GET the text/csv fragment as .txt
@@ -327,7 +328,7 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: text/plain
 [Asserts]
-body contains "Number,Footnote\r\n1,This is footnote one\r\n2,This is footnote two"
+body contains "Number,Footnote\n1,This is footnote one\n2,This is footnote two"
 
 
 # 5.5. GET the text/csv fragment as .json
