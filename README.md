@@ -335,9 +335,9 @@ This is the current list of valid conversions for each fragment type (others may
    curl -i -u fakeuser@email.com:fakepassword http(s)://fragments-api.com/v1/fragments/<id>.info
    ```
 10. To delete a specific fragment with id (DELETE v1/fragments/:id)
-   ```bash
-   curl -i -X DELETE -u fakeuser@email.com:fakepassword http(s)://fragments-api.com/v1/fragments/<id>
-   ```
+    ```bash
+    curl -i -X DELETE -u fakeuser@email.com:fakepassword http(s)://fragments-api.com/v1/fragments/<id>
+    ```
 
 
 
