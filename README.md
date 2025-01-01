@@ -209,7 +209,7 @@ Use the `docker-compose.local.yml` file to set up the environment with MinIO as 
    docker compose -f docker-compose.local.yml up -d
    ```
    > **Note:** We are using a different filename for our `docker-compose.yml`, so we indicate that with the `-f` flag.
-2. Log in to the [MinIO](https://min.io) console (similar to the AWS S3 Console) by going to <http://localhost:9001>, and using the `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` values you entered above.
+2. Log in to the [MinIO](https://min.io) console (similar to the AWS S3 Console) by going to <http://localhost:9001>, and using the `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` values you entered in the docker-compose.local.yml file.
 3. Create a new bucket by clicking the **Create Bucket** button.
 4. Choose a name for your bucket, for example `fragments` (which we set as the default in `docker-compose.local.yml` above) and click **Create Bucket**.
 5. Add a file to your bucket by clicking the **Upload** button and choosing a file to upload.
@@ -224,7 +224,8 @@ docker compose -f docker-compose.local.yml down
 docker compose -f docker-compose.local.yml up -d
 ```
 10. Log in to the MinIO Console at <http://localhost:9001> using the same username and password as before, and confirm that the bucket and object are still there.
-    You can now use S3 locally and have your data survive starting/stopping the containers. This is an ideal setup for local development, since you also get a console for viewing your data.
+
+You can now use S3 locally and have your data survive starting/stopping the containers. This is an ideal setup for local development, since you also get a console for viewing your data.
 
 #### Accessing Services
 
